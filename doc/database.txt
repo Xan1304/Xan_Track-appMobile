@@ -1,0 +1,129 @@
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
+
+CREATE TABLE public.chi_tiet_don_hang (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  order_id uuid,
+  ten_san_pham text NOT NULL,
+  so_luong integer NOT NULL,
+  gia_ban numeric NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  cua_hang_id uuid,
+  CONSTRAINT chi_tiet_don_hang_pkey PRIMARY KEY (id),
+  CONSTRAINT chi_tiet_don_hang_order_id_fkey FOREIGN KEY (order_id) REFERENCES public.don_hang_doanh_thu(id),
+  CONSTRAINT chi_tiet_don_hang_cua_hang_id_fkey FOREIGN KEY (cua_hang_id) REFERENCES public.danh_sach_cua_hang(id)
+);
+CREATE TABLE public.danh_muc_san_pham (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  ten_san_pham text NOT NULL,
+  gia_ban numeric NOT NULL,
+  anh_san_pham_url text,
+  loai_san_pham text,
+  CONSTRAINT danh_muc_san_pham_pkey PRIMARY KEY (id)
+);
+CREATE TABLE public.danh_sach_cua_hang (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  ten_cua_hang text NOT NULL,
+  dia_chi text,
+  lat double precision NOT NULL,
+  lng double precision NOT NULL,
+  ngay_tao timestamp with time zone DEFAULT now(),
+  tuyen_id uuid,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT danh_sach_cua_hang_pkey PRIMARY KEY (id),
+  CONSTRAINT danh_sach_cua_hang_tuyen_id_fkey FOREIGN KEY (tuyen_id) REFERENCES public.tuyen_ban_hang(id)
+);
+CREATE TABLE public.dieu_phoi_tam_thoi (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  cua_hang_id uuid,
+  nhan_vien_email text,
+  ngay_dieu_dong date NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT dieu_phoi_tam_thoi_pkey PRIMARY KEY (id),
+  CONSTRAINT dieu_phoi_tam_thoi_cua_hang_id_fkey FOREIGN KEY (cua_hang_id) REFERENCES public.danh_sach_cua_hang(id),
+  CONSTRAINT dieu_phoi_tam_thoi_nhan_vien_email_fkey FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email)
+);
+CREATE TABLE public.don_hang_doanh_thu (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  nhan_vien_email text NOT NULL,
+  cua_hang_id uuid,
+  tong_tien bigint DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  image_url text,
+  CONSTRAINT don_hang_doanh_thu_pkey PRIMARY KEY (id),
+  CONSTRAINT don_hang_doanh_thu_cua_hang_id_fkey FOREIGN KEY (cua_hang_id) REFERENCES public.danh_sach_cua_hang(id),
+  CONSTRAINT fk_ho_so_nhan_vien FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email)
+);
+CREATE TABLE public.don_nghi_phep (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  nhan_vien_email text,
+  ly_do text,
+  loai_nghi text,
+  trang_thai text DEFAULT 'cho_duyet'::text,
+  created_at timestamp with time zone DEFAULT now(),
+  minh_chung_url text,
+  ho_ten_nhan_vien text,
+  ngay_bat_dau date,
+  ngay_ket_thuc date,
+  CONSTRAINT don_nghi_phep_pkey PRIMARY KEY (id),
+  CONSTRAINT don_nghi_phep_nhan_vien_email_fkey FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email)
+);
+CREATE TABLE public.ho_so_nhan_vien (
+  id uuid NOT NULL,
+  email text UNIQUE,
+  ho_ten text,
+  vai_tro text DEFAULT 'nhan_vien'::text CHECK (vai_tro = ANY (ARRAY['admin'::text, 'nhan_vien'::text])),
+  chuc_vu text,
+  anh_dai_dien_url text,
+  ngay_tao timestamp with time zone NOT NULL DEFAULT timezone('utc'::text, now()),
+  ma_nhan_vien text UNIQUE,
+  so_dien_thoai text,
+  trang_thai text DEFAULT 'dang_lam'::text,
+  created_at timestamp with time zone DEFAULT now(),
+  tuyen_id uuid,
+  CONSTRAINT ho_so_nhan_vien_pkey PRIMARY KEY (id),
+  CONSTRAINT ho_so_nhan_vien_id_fkey FOREIGN KEY (id) REFERENCES auth.users(id),
+  CONSTRAINT ho_so_nhan_vien_tuyen_id_fkey FOREIGN KEY (tuyen_id) REFERENCES public.tuyen_ban_hang(id)
+);
+CREATE TABLE public.kpi_muc_tieu (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nhan_vien_email text NOT NULL,
+  thang integer NOT NULL,
+  nam integer NOT NULL,
+  muc_tieu_doanh_thu bigint NOT NULL DEFAULT 0,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT kpi_muc_tieu_pkey PRIMARY KEY (id),
+  CONSTRAINT kpi_muc_tieu_nhan_vien_email_fkey FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email)
+);
+CREATE TABLE public.lich_su_checkin (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  nhan_vien_email text,
+  cua_hang_id uuid,
+  image_url text,
+  thoi_gian timestamp with time zone DEFAULT now(),
+  khoang_cach bigint,
+  loai_hinh text DEFAULT 'checkin'::text,
+  CONSTRAINT lich_su_checkin_pkey PRIMARY KEY (id),
+  CONSTRAINT lich_su_checkin_cua_hang_id_fkey FOREIGN KEY (cua_hang_id) REFERENCES public.danh_sach_cua_hang(id),
+  CONSTRAINT fk_checkin_ho_so FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email)
+);
+CREATE TABLE public.lich_su_kiem_ton (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  cua_hang_id uuid,
+  nhan_vien_email text,
+  ten_san_pham text,
+  ton_kho_thuc_te integer,
+  ban_duoc_du_kien integer,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT lich_su_kiem_ton_pkey PRIMARY KEY (id),
+  CONSTRAINT fk_nhan_vien_kiem_ton FOREIGN KEY (nhan_vien_email) REFERENCES public.ho_so_nhan_vien(email),
+  CONSTRAINT fk_cua_hang_kiem_ton FOREIGN KEY (cua_hang_id) REFERENCES public.danh_sach_cua_hang(id)
+);
+CREATE TABLE public.tuyen_ban_hang (
+  id uuid NOT NULL DEFAULT uuid_generate_v4(),
+  ten_tuyen text NOT NULL,
+  mo_ta text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT tuyen_ban_hang_pkey PRIMARY KEY (id)
+);

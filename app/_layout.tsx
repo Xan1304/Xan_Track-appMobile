@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { View, ActivityIndicator, Text } from 'react-native';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../src/services/supabase';
 
 export default function RootLayout() {
   const [role, setRole] = useState<string | null>(null);
@@ -30,21 +30,17 @@ export default function RootLayout() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === '(auth)';
-    const inTabsGroup = segments[0] === '(tabs)';
-    const inAdminGroup = segments[0] === '(admin)';
-    const inRouteGroup = segments[0] === 'route'; 
-    // ✅ 1. KHAI BÁO BIẾN MỚI ĐỂ NHẬN DIỆN VÙNG HẬU CẦN ADMIN
-    const inRouteAdminGroup = segments[0] === 'route-admin'; 
+    const inSaleGroup = segments[0] === '(sale)';
+    const inManageGroup = segments[0] === '(manage)';
 
     if (!role && !inAuthGroup) {
       router.replace('/(auth)/login' as any);
     } 
-    // ✅ 2. CẬP NHẬT: ADMIN ĐƯỢC Ở TRONG (admin) HOẶC route-admin
-    else if (role === 'admin' && !inAdminGroup && !inRouteAdminGroup) {
-      router.replace('/(admin)' as any);
+    else if (role === 'admin' && !inManageGroup) {
+      router.replace('/(manage)' as any);
     } 
-    else if (role === 'nhan_vien' && !inTabsGroup && !inRouteGroup) {
-      router.replace('/(tabs)' as any);
+    else if (role === 'nhan_vien' && !inSaleGroup) {
+      router.replace('/(sale)' as any);
     }
   }, [role, loading, segments]);
 
@@ -60,11 +56,10 @@ export default function RootLayout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="(admin)" />
-      <Stack.Screen name="route" /> 
-      {/* ✅ 3. ĐĂNG KÝ VỚI HỆ THỐNG LÀ CÓ THƯ MỤC NÀY NỮA NHÉ */}
-      <Stack.Screen name="route-admin" /> 
+      <Stack.Screen name="(sale)" />
+      <Stack.Screen name="(manage)" />
     </Stack>
   );
 }
+
+
