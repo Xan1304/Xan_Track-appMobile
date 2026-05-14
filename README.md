@@ -3,6 +3,10 @@
 ## 📖 Giới thiệu
 Đây là ứng dụng di động được xây dựng nhằm mô phỏng và tối ưu hóa quy trình quản lý nhân sự, đặc biệt hỗ trợ đội ngũ nhân viên sales (bán hàng) trong việc chấm công và theo dõi doanh thu thực tế. 
 
+## 📸 Clip Demo
+https://drive.google.com/file/d/1HUcKlHx8AFCaDt_8Sb6T3BonGOJAisKv/view?usp=sharing
+
+
 ## ✨ Tính năng nổi bật
 * **Chấm công thông minh:** Hỗ trợ Check-in/Check-out dựa trên tọa độ GPS và xác thực bằng hình ảnh chụp trực tiếp (Selfie).
 * **Quản lý luồng công việc:** Ghi nhận thông tin, doanh thu các ca làm việc.
