@@ -14,7 +14,5 @@ https://drive.google.com/file/d/1HUcKlHx8AFCaDt_8Sb6T3BonGOJAisKv/view?usp=shari
 
 ## 🛠 Công nghệ sử dụng
 * **Môi trường phát triển:** React Native 
-* **Database/Backend:** [Bạn điền tên công nghệ dùng làm database vào đây nhé, ví dụ: Supabase / Firebase / Node.js]
+* **Database/Backend:** Subapase
 
-## 📸 Giao diện ứng dụng (Screenshots)
-*(Chèn 2-3 tấm ảnh chụp màn hình các tính năng chính của app vào đây để sinh động hơn)*
